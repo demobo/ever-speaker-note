@@ -1,0 +1,2 @@
+ever-speaker-note
+=================
