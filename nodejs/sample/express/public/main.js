@@ -127,8 +127,10 @@ var errMessage = 0;
 //Get all of the data URIs and put them in an array
 var dataArray = [];
 
-function loadSpeakernotes(id) {
-	speakernotes = {"id": id, notes: ["note 1","note2"], sequence: [], audio: ""};
+function loadSpeakernotes(url) {
+	var title = url.split('/').reverse();
+	title = title[0];
+	speakernotes = {"id": title, "url": url, notes: ["note 1","note2"], sequence: [], audio: ""};
 	console.log(speakernotes);
 }
 function saveSpeakernotes() {
