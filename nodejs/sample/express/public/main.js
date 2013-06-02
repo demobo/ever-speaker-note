@@ -4,19 +4,34 @@ if (typeof DEMOBO != 'undefined') {
 	DEMOBO.stayOnBlur = true;
 	DEMOBO.appName = "www.presentationdocs.com";
 	DEMOBO.init = function () {
-		demobo.setController({"page": "presentation"});
+		ui = {
+			name: 				'docsgoogle',
+			version: 			'0601'
+		};
+		ui.controllerUrl = "http://rc1.demobo.com/rc/"+ui.name+"?"+ui.version;
+		demobo.setController( {
+			url : ui.controllerUrl,
+			orientation: 'portrait'
+		});
 		demobo.renderQR();
-		demobo.addEventListener('input',function(e) {
-			var playerIndex = demobo.getPlayerIndex(e.deviceID);
-			if (playerIndex>0) return;
-			if (e.source=='demoboVolume') {
-				if (e.value=="down") {
-					prevPage();
-				} else if (e.value=="up") {
-					nextPage();
-				}
-			}
-		},false);
+		demobo.mapInputEvents( {
+			'nextButton' : 		nextPage,
+			'previousButton' : 	prevPage,
+			'notesSlider':		setSlide,
+			'demoboApp' : 		onReady,
+			'demoboVolume' : 	onVolume
+		});
+		// demobo.addEventListener('input',function(e) {
+			// var playerIndex = demobo.getPlayerIndex(e.deviceID);
+			// if (playerIndex>0) return;
+			// if (e.source=='demoboVolume') {
+				// if (e.value=="down") {
+					// prevPage();
+				// } else if (e.value=="up") {
+					// nextPage();
+				// }
+			// }
+		// },false);
 		demobo.addEventListener('swipe',function(e) {
 			var playerIndex = demobo.getPlayerIndex(e.deviceID);
 			if (playerIndex>0) return;
@@ -54,6 +69,39 @@ if (typeof DEMOBO != 'undefined') {
 $(function(){
 	setupEvents();
 });
+function onReady() {
+	refreshController();
+}
+function refreshController() {
+	demobo.callFunction('loadNotes', getNotes());
+	setCurrentPage(1);
+}
+function setCurrentPage(num) {
+	curPage = parseInt(num);
+	demobo.callFunction('setCurrentPage', num);
+}
+function getCurrentPageNumber() {
+	return curPage;
+}
+function getPageCount() {
+	return totalPage;
+}
+function getNotes() {
+	var toReturn = [];
+	if (totalPage) {
+		for (var i=0; i<totalPage; i++) {
+			var s = {
+				'note' : speakernotes.notes[i]?speakernotes.notes[i]:""
+			};
+			toReturn.push(s);
+		}
+	}
+	return toReturn;
+}
+function onVolume(value) {
+	if (value=='up') nextPage();
+	else if (value=='down') prevPage();
+}
 function setupEvents() {
 	$('#fullscreenMask').dblclick(normalScreen);
 	$( "#tabs" ).tabs();
@@ -102,7 +150,7 @@ function setupEvents() {
 		saveSpeakernotes();
 	});
 	$('#speakernotearea').bind('input propertychange', function() {
-	      speakernotes.notes[curPage-1]=$(this).val();
+	    speakernotes.notes[curPage-1]=$(this).val();
 	});
 	$('#pdfviewer').dblclick(toggleScreen);
 }
@@ -134,8 +182,8 @@ function loadSpeakernotes(url) {
 	console.log(speakernotes);
 }
 function saveSpeakernotes() {
-	console.log(speakernotes);
 	$.post("create", speakernotes);
+	demobo.callFunction('loadNotes', getNotes());
 }
 function loadDoc(doc) {
 	var docstr = doc.split('~');
@@ -212,10 +260,7 @@ function setPage() {
 function nextPage() {
 	if (curPage>=totalPage) return;
 	if ($('#pdfviewer').is(":visible")) {
-		curPage ++;
-		$('#pdfviewer').animate({
-            scrollTop: '+='+$('#pdfviewer').height()
-        }, 'slow');
+		setSlide(curPage+1);
         setPage();
 	}
 	var t = new Date().getTime();
@@ -224,27 +269,39 @@ function nextPage() {
 function prevPage() {
 	if (curPage<=1) return;
 	if ($('#pdfviewer').is(":visible")) {
-		curPage --;
-		if (curPage<=0) {
+		if (curPage<=1) {
 			curPage = 1;
 			setPage();
 			return;
 		}
-		$('#pdfviewer').animate({
-            scrollTop: '-='+$('#pdfviewer').height()
-        }, 'slow');
+		setSlide(curPage-1);
         setPage();
 	}
 	var t = new Date().getTime();
 	if (isRecording) speakernotes.sequence.push({t:t, a: 'p'});
 }
+function setSlide(num) {
+	var diff = num - curPage;
+	if (diff>0) {
+		$('#pdfviewer').animate({
+	        scrollTop: '+='+($('#pdfviewer').height()*diff)
+	    }, 'slow');
+	} else {
+		$('#pdfviewer').animate({
+	        scrollTop: '-='+(-1*$('#pdfviewer').height()*diff)
+	    }, 'slow');
+	}
+	setCurrentPage(num);
+}
 function toggleRecord() {
 	isRecording = !isRecording;
 	if (isRecording) {
+		startRecording();
 		$('.recordButton').css('color','red');
 		var t = new Date().getTime();
 		speakernotes.sequence = [{t:t, a: 's'}];
 	} else {
+		stopRecording();
 		$('.recordButton').css('color','');
 	}
 }
@@ -437,4 +494,45 @@ function uploadFile(file) {
             });
     });
     return false;
+}
+
+
+
+
+
+var onFail = function(e) {
+	console.log('Rejected!', e);
+};
+
+var onSuccess = function(s) {
+	var context = new webkitAudioContext();
+	var mediaStreamSource = context.createMediaStreamSource(s);
+	recorder = new Recorder(mediaStreamSource);
+	recorder.record();
+
+	// audio loopback
+	// mediaStreamSource.connect(context.destination);
+}
+
+window.URL = window.URL || window.webkitURL;
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+var recorder;
+
+function startRecording() {
+	if (navigator.getUserMedia) {
+		navigator.getUserMedia({
+			audio : true
+		}, onSuccess, onFail);
+	} else {
+		console.log('navigator.getUserMedia not present');
+	}
+}
+
+function stopRecording() {
+	audio = document.querySelector('audio');
+	recorder.stop();
+	recorder.exportWAV(function(s) {
+		audio.src = window.URL.createObjectURL(s);
+	});
 }
