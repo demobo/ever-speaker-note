@@ -1,66 +1,74 @@
-extends layout
-
-block content
-  h1 Ever Speaker Note
-  p
-    |  - cloud presentation
-  hr
-  - if(session.error)
-    h2 Error
-    p
-      = session.error
-  h2 Authentication
-  - if(session.oauthAccessToken)
-    a(href='/clear') Click here
-    |  to 
-    | start over
-    br
-    br
-    | Node Title:
-    br
-    input(type='text', name='ntitle')
-    br
-    | Node Content:
-    br
-    input(type='text', name='ncontent')
-    br
-    a(href='/create') Click here
-    |  to 
-    | Create a Note
-    br
-  - else
-    a(href='/oauth') Click here
-    |  to 
-    | connect Evernote
-
-  hr
-  - if(session.notebooks)
-    h2 Notebooks
-    ul
-      - for (var i = 0; i < session.notebooks.length; ++i)
-        li= session.notebooks[i].name
-    hr
-  h2 Current status
-  ul
-    li
-      b NoteStore URL:  
-      = session.edamNoteStoreUrl
-    li
-      b Web API URL prefix: 
-      = session.edamNoteStoreUrl
-  h3 Token Credentials:
-  ul
-    li
-      b token:  
-      = session.oauthAccessToken
-    li
-      b secret:  
-      = session.oauthAccessTokenSecret
-    li
-      b User ID:  
-      = session.edamUserId
-    li
-      b Expires:  
-      = session.edamExpires
-      
-    
+!!! 5
+html
+ head
+    meta(http-equiv='Content-Type', content='text/html; charset=UTF-8')
+    title Ever Speaker Note
+    link(rel='icon', type='image/png', href='icon_black_128.png')
+    link(rel='stylesheet', type='text/css', href='http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css')
+    link(rel='stylesheet', type='text/css', href='http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css')
+    link(rel='stylesheet', type='text/css', href='http://netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css')
+    link(rel='stylesheet', type='text/css', href='main.css')
+    link(rel='stylesheet', type='text/css', href='icons.css')
+    script(type='text/javascript', src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js')
+    script(type='text/javascript', src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js')
+    script(type='text/javascript', src='http://api.demobo.com/demobo.1.6.4.min.js')
+    script(type='text/javascript', src='http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js')
+    script(type='text/javascript', src='main.js')
+ body.preload(oncontextmenu='return true;')
+    #header-container
+      #drop-box(ondragover='return false')
+        | Ever Speaker Note
+    #wrapper
+      #left-container
+        .navbox
+          ul#tab-labels.nav
+            li#tab-label0
+              a(onclick='')
+                i.ico-user.ico-white
+                span Sign in
+            li#tab-label1
+              a.connect(onclick='showQR()')
+                i.ico-signal-alt.ico-white
+                span Connect
+            li#tab-label2
+              a(title='This helps users quickly to locate files they presented previously', onclick='clickTab(2)')
+                i.ico-list.ico-white
+                span Recent Files
+                span.label 0
+            li#tab-label3
+              a(title='This extension supports speaker notes', onclick='showSpeakerNotes()')
+                i.ico-keynote.ico-white
+                span Speaker Notes
+      #app-container.box.lifted.drop-shadow
+        #mid-container
+          #tabs-2.rightPanel(style='display: none;')
+            #panelTitle
+              | Recent Files
+            .block
+              #recentDocs
+        #right-container
+          #fullscreenhint
+          #player
+          #pdfviewer.docFrame
+          #pageNumber
+            pre.
+              0/0
+          textarea#speakernotearea
+          .btn-toolbar
+            .btn-group
+              a.btn.btn-large(href='#')
+                i.icon-bullseye
+              a.btn.btn-large(href='#')
+                i.icon-play
+              a.btn.btn-large(href='#')
+                i.icon-step-backward
+              a.btn.btn-large(href='#')
+                i.icon-step-forward
+          button#saveButton.btn.btn-large(type='button')
+            | Save
+      #footer-container
+    #dialog(title='Message:')
+      p#dialogBody
+      .main.img
+        #qrcode
+    #fullscreenMask
