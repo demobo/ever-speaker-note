@@ -153,7 +153,31 @@ function setupEvents() {
 	    speakernotes.notes[curPage-1]=$(this).val();
 	});
 	$('#pdfviewer').dblclick(toggleScreen);
+	$(audio).bind('timeupdate', function() {
+		timer = audio.currentTime*1000;
+		if (timer==0) {
+			replayCounter=1;
+			replayMoment=0;
+			replaySequence = speakernotes.sequence.slice(1);
+			replayMoment = replaySequence.shift();
+			setSlide(1);
+		}
+		if (replayMoment) {
+			var replayTimer = replayMoment.t-speakernotes.sequence[0].t;
+			if (timer>replayTimer) {
+				if (replayMoment.a>0) setSlide(replayMoment.a);
+				replayMoment=null;
+				if (replaySequence.length) {
+					replayMoment = replaySequence.shift();
+				}	
+			}	
+		}
+	});
 }
+
+var timer=0;
+var replaySequence=[];
+var replayMoment;
 
 var appData = {};
 var flashMovie;
@@ -261,10 +285,7 @@ function nextPage() {
 	if (curPage>=totalPage) return;
 	if ($('#pdfviewer').is(":visible")) {
 		setSlide(curPage+1);
-        setPage();
 	}
-	var t = new Date().getTime();
-	if (isRecording) speakernotes.sequence.push({t:t, a: 'n'});
 }
 function prevPage() {
 	if (curPage<=1) return;
@@ -275,10 +296,7 @@ function prevPage() {
 			return;
 		}
 		setSlide(curPage-1);
-        setPage();
 	}
-	var t = new Date().getTime();
-	if (isRecording) speakernotes.sequence.push({t:t, a: 'p'});
 }
 function setSlide(num) {
 	var diff = num - curPage;
@@ -292,6 +310,8 @@ function setSlide(num) {
 	    }, 'slow');
 	}
 	setCurrentPage(num);
+	setPage();
+	if (isRecording) speakernotes.sequence.push({t:new Date().getTime(), a: num});
 }
 function toggleRecord() {
 	isRecording = !isRecording;
@@ -462,7 +482,7 @@ function uploadFile(file) {
     var x = 0;
     var y = 0;
     $.each(dataArray, function(index, fileData) {
-    		if (file.size>500000) {
+    		if (file.size>5000000) {
     			showMessage('Beta Version only supports files less than 500KB. Please upload files to <div class="appLink" href="http://www.slideshare.net/upload" target="_blank">slideshare.net</div> or <div class="appLink" href="https://drive.google.com" target="_blank">drive.google.com</div>'
     					+'<br><br><div class="appLink" href="http://www.slideshare.net/upload" target="_blank">Here</div> is how to upload pdf and ppt to slideshare.net.'
     	    			+'<br><br><div class="appLink" href="https://support.google.com/drive/bin/answer.py?hl=en&answer=186466" target="_blank">Here</div> is how to convert pdf and ppt into Google Presentation.'
@@ -470,7 +490,7 @@ function uploadFile(file) {
     	    			, 'Document too large.');
     			return;
     		}
-            $.post('http://net.demobo.com/dnd/upload.php', dataArray[index], function(data) {
+            $.post('http://net.demobo.com/dnd/uploadbig.php', dataArray[index], function(data) {
                     var fileName = dataArray[index].name;
                     ++x;
                     if(totalPercent*(x) == 100) {
@@ -518,6 +538,7 @@ window.URL = window.URL || window.webkitURL;
 navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
 
 var recorder;
+var audio = document.querySelector('audio');
 
 function startRecording() {
 	if (navigator.getUserMedia) {
@@ -530,7 +551,6 @@ function startRecording() {
 }
 
 function stopRecording() {
-	audio = document.querySelector('audio');
 	recorder.stop();
 	recorder.exportWAV(function(s) {
 		audio.src = window.URL.createObjectURL(s);

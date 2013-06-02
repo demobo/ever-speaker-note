@@ -13,7 +13,6 @@ html
     script(type='text/javascript', src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js')
     script(type='text/javascript', src='http://api.demobo.com/demobo.1.6.4.min.js')
     script(type='text/javascript', src='http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js')
-    script(type='text/javascript', src='main.js')
  body.preload(oncontextmenu='return true;')
     #header-container
       #drop-box(ondragover='return false')
@@ -68,7 +67,7 @@ html
               a.nextButton.btn.btn-inverse(href='#')
                 i.icon-step-forward
               audio(controls='controls')
-                source(src='horse.mp3', type='audio/mpeg')  
+                source(src='', type='audio/mpeg')  
           button#saveButton.btn.btn-inverse(type='button')
             | Save
       #footer-container
@@ -77,4 +76,5 @@ html
       .main.img
         #qrcode
     #fullscreenMask
+    script(type='text/javascript', src='main.js')
     script(type='text/javascript', src='recorder.js')
