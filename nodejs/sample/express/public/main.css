@@ -808,3 +808,8 @@ label.info {
 #pageNumber {
 	position: absolute;
 }
+audio {
+	position: absolute;
+	width: 300px;
+	margin: 0px 27px;
+}
