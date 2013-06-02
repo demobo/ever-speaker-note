@@ -87,7 +87,7 @@ exports.clear = function(req, res) {
 // '/create'
 // create a note
 exports.create = function(req, res) {
-	console.log("token:"+req.session.oauthAccessToken);
+	console.log(req.body);
 	var en = require('../CreateNode.js');
 	en.createnote(req.session.oauthAccessToken, "title", "Hello World!");
 	res.redirect('/');

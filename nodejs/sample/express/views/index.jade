@@ -24,9 +24,13 @@ html
           ul#tab-labels.nav
             li#tab-label0
               - if(session.oauthAccessToken)
-                a(href='/clear') Sign Out
+                a(href='/clear')
+                  i.ico-user.ico-white
+                  span Sign Out
               - else
-                a(href='/oauth') Sign In
+                a(href='/oauth')
+                  i.ico-user.ico-white
+                  span Sign In
             li#tab-label1
               a.connect(onclick='showQR()')
                 i.ico-signal-alt.ico-white
