@@ -89,6 +89,12 @@ function setupEvents() {
 	    clickTab(2);
 	    return false;
 	});
+	$('.btn-group').on('click', '.prevButton', function(){
+		prevPage();
+	});
+	$('.btn-group').on('click', '.nextButton', function(){
+		nextPage();
+	});
 }
 
 var appData = {};
@@ -131,9 +137,6 @@ function clickTab(index){
 	$('#mid-container div[id^="tabs-"]').hide();
 	$('#tabs-'+index).slideDown('3000');
 	$('#pageCover').trigger('click');
-	if (index == 2 && demobo.getPlayers().length==0) {
-		showQR();
-	}
 }
 
 function loadGviewByURL(id) {
@@ -220,11 +223,6 @@ function loadAppData() {
 }
 function setAppData(data) {
 	appData = data;
-//	if (!jQuery.isEmptyObject(appData) && $('#arrow').length == 0 && localStorage.getItem('demobo_feedback_prompt') != '0') {
-//		$('#tab-label3').trigger('click');
-//		$.createPageCover();
-//		$.createDialog();
-//	}
 	renderRecent();
 }
 function saveDoc(docType, docID) {
