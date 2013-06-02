@@ -95,6 +95,12 @@ function setupEvents() {
 	$('.btn-group').on('click', '.nextButton', function(){
 		nextPage();
 	});
+	$('#saveButton').on('click', function(){
+		saveSpeakernotes();
+	});
+	$('#speakernotearea').bind('input propertychange', function() {
+	      speakernotes.notes[curPage-1]=$(this).val();
+	});
 }
 
 var appData = {};
@@ -104,6 +110,7 @@ var totalPage = 0;
 var scribd_doc;
 var curPresentationId;
 var dragElement = null;
+var speakernotes = {};
 
 //Makes sure the dataTransfer information is sent when we
 //Drop the item in the drop box.
@@ -115,6 +122,13 @@ var errMessage = 0;
 //Get all of the data URIs and put them in an array
 var dataArray = [];
 
+function loadSpeakernotes(id) {
+	speakernotes = {"id": id, notes: ["note 1","note2"], sequence: [], audio: ""};
+	console.log(speakernotes);
+}
+function saveSpeakernotes() {
+	console.log(speakernotes);
+}
 function loadDoc(doc) {
 	var docstr = doc.split('~');
 	var type = docstr[0];
@@ -140,6 +154,7 @@ function clickTab(index){
 }
 
 function loadGviewByURL(id) {
+	loadSpeakernotes(id);
 	curPresentationId = id;
 	pdfURL = "http://docs.google.com/gview?url="+encodeURIComponent(id)+"&a=bi";
 	curPage = 1;
@@ -157,7 +172,7 @@ function loadGviewImg(page) {
 	img.error(function(e){ 
 		$(this).remove(); 
 		totalPage=page-1; 
-		$("#pageNumber pre").text(curPage+"/"+totalPage);
+		setPage();
 	});
 }
 function toggleScreen() {
@@ -181,6 +196,11 @@ function normalScreen() {
 		$('#pdfviewer img').height($('#pdfviewer').height());
 	}
 }
+function setPage() {
+	$("#pageNumber pre").text(curPage+"/"+totalPage);
+	$("#speakernotearea").val("");
+	if (curPage) $("#speakernotearea").val(speakernotes.notes[curPage-1]);
+}
 function nextPage() {
 	if (curPage>=totalPage) return;
 	if ($('#pdfviewer').is(":visible")) {
@@ -188,7 +208,7 @@ function nextPage() {
 		$('#pdfviewer').animate({
             scrollTop: '+='+$('#pdfviewer').height()
         }, 'slow');
-        $("#pageNumber pre").text(curPage+"/"+totalPage);
+        setPage();
 	}
 }
 function prevPage() {
@@ -197,13 +217,13 @@ function prevPage() {
 		curPage --;
 		if (curPage<=0) {
 			curPage = 1;
-			$("#pageNumber pre").text(curPage+"/"+totalPage);
+			setPage();
 			return;
 		}
 		$('#pdfviewer').animate({
             scrollTop: '-='+$('#pdfviewer').height()
         }, 'slow');
-        $("#pageNumber pre").text(curPage+"/"+totalPage);
+        setPage();
 	}
 }
 function addUser(e) {
