@@ -60,7 +60,7 @@ function setupEvents() {
 	$('body').bind('dragover', function (e) {
 	    e.preventDefault();
 	    $('#app-container').css({
-	    	'background' : '#c7F5e5'
+	    	'background' : '#69aa35'
 	    });
 	    return false;
 	});
@@ -93,10 +93,9 @@ function setupEvents() {
 
 var appData = {};
 var flashMovie;
-var curPage = 1;
+var curPage = 0;
+var totalPage = 0;
 var scribd_doc;
-var googleDocId = "1pM2V_Jy2DIwh-Dldi9DgxfScIFWiAT9yEXVCtyzfWGg";
-var slideShareId = "presentationremote-120502003950-phpapp01"; // presenation docs
 var curPresentationId;
 var dragElement = null;
 
@@ -152,7 +151,11 @@ function loadGviewImg(page) {
 	$('#pdfviewer').append(img);
 	img.height($('#pdfviewer').height());
 	img.load(function(e){ loadGviewImg(page+1); });
-	img.error(function(e){ $(this).remove(); });
+	img.error(function(e){ 
+		$(this).remove(); 
+		totalPage=page-1; 
+		$("#pageNumber pre").text(curPage+"/"+totalPage);
+	});
 }
 function toggleScreen() {
 	var curFrame = $('.docFrame:visible');
@@ -165,7 +168,6 @@ function toggleScreen() {
 	if (curFrame.hasClass('fullscreen')) {
 		$('#fullscreenMask').show();
 	}
-	closeAllPrompt();
 };
 function normalScreen() {
 	$('#fullscreenMask').hide();
@@ -177,41 +179,28 @@ function normalScreen() {
 	}
 }
 function nextPage() {
-	if ($('#slideshare').is(":visible")) {
-		document.getElementById("slideshare").next();
-	} else if ($('#scribd').is(":visible")) {
-		scribd_doc.api.setPage(parseInt(scribd_doc.api.getPage())+1);
-	} else if ($('#googledoc').is(":visible")) {
-		curPage ++;
-		document.getElementById("googledoc").setAttribute('src',googledocURL+'#'+curPage);
-	} else if ($('#pdfviewer').is(":visible")) {
+	if (curPage>=totalPage) return;
+	if ($('#pdfviewer').is(":visible")) {
 		curPage ++;
 		$('#pdfviewer').animate({
             scrollTop: '+='+$('#pdfviewer').height()
         }, 'slow');
+        $("#pageNumber pre").text(curPage+"/"+totalPage);
 	}
 }
 function prevPage() {
-	if ($('#slideshare').is(":visible")) {
-		document.getElementById("slideshare").previous();
-	} else if ($('#scribd').is(":visible")) {
-		scribd_doc.api.setPage(parseInt(scribd_doc.api.getPage())-1);
-	} else if ($('#googledoc').is(":visible")) {
+	if (curPage<=1) return;
+	if ($('#pdfviewer').is(":visible")) {
 		curPage --;
 		if (curPage<=0) {
 			curPage = 1;
-			return;
-		}
-		document.getElementById("googledoc").setAttribute('src',googledocURL+'#'+curPage);
-	} else if ($('#pdfviewer').is(":visible")) {
-		curPage --;
-		if (curPage<=0) {
-			curPage = 1;
+			$("#pageNumber pre").text(curPage+"/"+totalPage);
 			return;
 		}
 		$('#pdfviewer').animate({
             scrollTop: '-='+$('#pdfviewer').height()
         }, 'slow');
+        $("#pageNumber pre").text(curPage+"/"+totalPage);
 	}
 }
 function addUser(e) {
