@@ -56,9 +56,16 @@ exports.createnote = function(authToken, pdfObj) {
 	// });
 	
 	CreateNotebook(authToken, "Every Speaker Note", function(notebook){
-		CreateNote(pdfObj, notebook, function(note){
-			
-		});
+		
+		FindNote(authToken, pdfObj.id, function(note) {
+			if (note) {
+				UpdateNote(authToken, note, pdfObj, function(note){
+				});
+			} else {
+				CreateNote(pdfObj, notebook, function(note){
+				});
+			}
+		})
 	});
 }
 
@@ -129,9 +136,7 @@ function CreateNote(pdf, notebook, callback)
 	// at http://dev.evernote.com/documentation/cloud/chapters/ENML.php
 	 note.content = '<?xml version="1.0" encoding="UTF-8"?>';
 	 note.content += '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">';
-	 note.content += '<en-note>'+ JSON.stringify(pdf) +'<br/>';
-	 note.content += '<en-media type="image/png" hash="' + hashHex + '"/>';
-	 note.content += '</en-note>';
+	 note.content += '<en-note>'+ JSON.stringify(pdf) + '</en-note>';
 	
 	//note.content = JSON.stringify(pdf);
 
@@ -145,6 +150,62 @@ function CreateNote(pdf, notebook, callback)
 		console.log("Creating a new note in the default notebook");
 		console.log();
 		console.log("Successfully created a new note with GUID: " + note.guid);
+		if(callback) {
+			callback(note);
+		}
+	});
+}
+
+function FindNote(authToken, title, callback) {
+	
+	var client = new Evernote.Client({
+		token : authToken,
+		sandbox : true
+	});
+	
+	var noteStore = client.getNoteStore();
+	
+	var filter = new Evernote.NoteFilter();
+	filter.notebookGuid = '7fe481b9-cefc-4b7a-aae7-ff3aa650e232';
+	
+	var spec = new Evernote.NotesMetadataResultSpec();
+	console.log('59 - ' + spec);
+	spec.includeTitle=true;
+	
+	noteStore.findNotesMetadata(authToken, filter, 0, 10, spec, function(noteList){
+		var notes = noteList.notes;
+		for (i in notes)
+		{
+			console.log('62 - ' + notes[i].title);
+			if (notes[i].title == title) {
+				console.log('69 - ' + notes[i]);
+				noteStore.getNote(authToken, notes[i].guid, true, false, false, false, function(note){
+					callback(note);
+				});
+			}
+		}
+	});
+}
+
+function UpdateNote(authToken, note, pdf, callback) {
+	var client = new Evernote.Client({
+		token : authToken,
+		sandbox : true
+	});
+	console.log('197');
+	noteStore = client.getNoteStore();
+	console.log('199');
+	
+	note.content = '<?xml version="1.0" encoding="UTF-8"?>';
+	note.content += '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">';
+	note.content += '<en-note>'+ JSON.stringify(pdf) + '</en-note>';
+	
+	console.log('203' + note);
+	
+	console.log('204' + note.content);
+	
+	noteStore.createNote(authToken, note, function(note) {
+		console.log("206, updated note + " + note.title);
 		if(callback) {
 			callback(note);
 		}

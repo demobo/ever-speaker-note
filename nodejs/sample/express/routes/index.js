@@ -87,8 +87,14 @@ exports.clear = function(req, res) {
 // '/create'
 // create a note
 exports.create = function(req, res) {
-	console.log(req.body);
+	console.log('90 ' + req.body);
 	var en = require('../CreateNode.js');
 	en.createnote(req.session.oauthAccessToken, req.body);
 	res.redirect('/');
+};
+
+exports.retrieve = function(req, res) {
+	console.log('97 ' + req.param('title'));
+	var en = require('../RetrieveNote.js');
+	en.retrieveNote(res, req.session.oauthAccessToken, req.param('title'));
 };

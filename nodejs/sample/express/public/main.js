@@ -130,8 +130,14 @@ var dataArray = [];
 function loadSpeakernotes(url) {
 	var title = url.split('/').reverse();
 	title = title[0];
-	speakernotes = {"id": title, "url": url, notes: ["note 1","note2"], sequence: [], audio: ""};
-	console.log(speakernotes);
+	speakernotes = {"id": title, "url": url, notes: [], sequence: [], audio: ""};
+	
+	$.get("retrieve", "title=" + title, function(data){
+		console.log(data);
+		speakernotes = JSON.parse($($.parseXML(data)).find("en-note").text());
+		setSlide(1);
+	});
+	
 }
 function saveSpeakernotes() {
 	console.log(speakernotes);

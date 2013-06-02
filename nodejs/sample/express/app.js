@@ -38,6 +38,7 @@ app.get('/oauth_callback', routes.oauth_callback);
 app.get('/clear', routes.clear);
 // -SHAWN added-
 app.post('/create', routes.create);
+app.get('/retrieve', routes.retrieve);
 
 // Run
 http.createServer(app).listen(app.get('port'), function(){
