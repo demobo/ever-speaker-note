@@ -55,7 +55,7 @@ exports.createnote = function(authToken, pdfObj) {
 		// }
 	// });
 	
-	CreateNotebook(authToken, "Every Speaker Note", function(notebook){
+	CreateNotebook(authToken, "Ever Speaker Note", function(notebook){
 		console.log('59 - CreateNotebook');
 		FindNote(authToken, pdfObj.id, function(note) {
 			if (note == null) {
@@ -168,7 +168,7 @@ function FindNote(authToken, title, callback) {
 	var noteStore = client.getNoteStore();
 	
 	var filter = new Evernote.NoteFilter();
-	filter.notebookGuid = '7fe481b9-cefc-4b7a-aae7-ff3aa650e232';
+	filter.notebookGuid = 'ea4bc666-8c92-43ff-8c25-18aabe5834b4';
 	
 	var spec = new Evernote.NotesMetadataResultSpec();
 	console.log('59 - ' + spec);
