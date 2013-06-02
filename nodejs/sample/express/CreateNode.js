@@ -44,27 +44,59 @@ exports.createnote = function(authToken, pdfObj) {
 			process.exit(1);
 		}
 	});
-
-	noteStore = client.getNoteStore();
-
-	// List all of the notebooks in the user's account
-	var notebooks = noteStore.listNotebooks(function(notebooks) {
-		console.log("Found " + notebooks.length + " notebooks:");
-		for (var i in notebooks) {
-			console.log("  * " + notebooks[i].name);
-		}
-	});
+// 
+// 	
+// 
+	// // List all of the notebooks in the user's account
+	// var notebooks = noteStore.listNotebooks(function(notebooks) {
+		// console.log("Found " + notebooks.length + " notebooks:");
+		// for (var i in notebooks) {
+			// console.log("  * " + notebooks[i].name);
+		// }
+	// });
 	
-	CreateNoteUnderNotebook(pdfObj.id, pdfObj.id, null);
+	CreateNotebook(authToken, "Every Speaker Note", function(notebook){
+		CreateNote(pdfObj, notebook, function(note){
+			
+		});
+	});
 }
 
-function CreateNoteUnderNotebook(title, content, notebook_guid)
+function CreateNotebook(authToken, title, callback) {
+	var client = new Evernote.Client({
+		token : authToken,
+		sandbox : true
+	});
+	console.log('68');
+	noteStore = client.getNoteStore();
+	console.log('70');
+	var notebook = new Evernote.Notebook();
+	notebook.name = title;
+	notebook.guid = '7fe481b9-cefc-4b7a-aae7-ff3aa650e232';
+	
+	console.log('75');
+
+	noteStore.createNotebook(authToken, notebook, function(notebook){
+		console.log('80 - notebook.guid' + notebook.guid);
+		console.log('81 - notebook' + notebook);
+		if (notebook == 'EDAMUserException') {
+			noteStore.getNotebook(authToken,'7fe481b9-cefc-4b7a-aae7-ff3aa650e232', function(notebook){
+				console.log('84 - get notebook - notebook.guid' + notebook.guid);
+				callback(notebook);	
+			});
+		} else {
+			callback(notebook);	
+		}
+	});
+}
+
+function CreateNote(pdf, notebook, callback)
 {
 	// To create a new note, simply create a new Note object and fill in
 	// attributes such as the note's title.
 	var note = new Evernote.Note();
-	note.title = title;
-	note.notebookGuid = notebook_guid;
+	note.title = pdf.id;
+	note.notebookGuid = notebook.guid;
 
 	// To include an attachment such as an image in a note, first create a Resource
 	// for the attachment. At a minimum, the Resource contains the binary attachment
@@ -95,21 +127,26 @@ function CreateNoteUnderNotebook(title, content, notebook_guid)
 	// The content of an Evernote note is represented using Evernote Markup Language
 	// (ENML). The full ENML specification can be found in the Evernote API Overview
 	// at http://dev.evernote.com/documentation/cloud/chapters/ENML.php
-	note.content = '<?xml version="1.0" encoding="UTF-8"?>';
-	note.content += '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">';
-	note.content += '<en-note>'+ content +'<br/>';
-	note.content += '<en-media type="image/png" hash="' + hashHex + '"/>';
-	note.content += '</en-note>';
+	 note.content = '<?xml version="1.0" encoding="UTF-8"?>';
+	 note.content += '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">';
+	 note.content += '<en-note>'+ JSON.stringify(pdf) +'<br/>';
+	 note.content += '<en-media type="image/png" hash="' + hashHex + '"/>';
+	 note.content += '</en-note>';
+	
+	//note.content = JSON.stringify(pdf);
 
 	// Finally, send the new note to Evernote using the createNote method
 	// The new Note object that is returned will contain server-generated
 	// attributes such as the new note's unique GUID.
 	console.log(note);
 	
-	noteStore.createNote(note, function(createdNote) {
+	noteStore.createNote(note, function(note) {
 		console.log();
 		console.log("Creating a new note in the default notebook");
 		console.log();
-		console.log("Successfully created a new note with GUID: " + createdNote.guid);
+		console.log("Successfully created a new note with GUID: " + note.guid);
+		if(callback) {
+			callback(note);
+		}
 	});
 }
