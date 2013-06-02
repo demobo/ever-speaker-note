@@ -4,19 +4,34 @@ if (typeof DEMOBO != 'undefined') {
 	DEMOBO.stayOnBlur = true;
 	DEMOBO.appName = "www.presentationdocs.com";
 	DEMOBO.init = function () {
-		demobo.setController({"page": "presentation"});
+		ui = {
+			name: 				'docsgoogle',
+			version: 			'0601'
+		};
+		ui.controllerUrl = "http://rc1.demobo.com/rc/"+ui.name+"?"+ui.version;
+		demobo.setController( {
+			url : ui.controllerUrl,
+			orientation: 'portrait'
+		});
 		demobo.renderQR();
-		demobo.addEventListener('input',function(e) {
-			var playerIndex = demobo.getPlayerIndex(e.deviceID);
-			if (playerIndex>0) return;
-			if (e.source=='demoboVolume') {
-				if (e.value=="down") {
-					prevPage();
-				} else if (e.value=="up") {
-					nextPage();
-				}
-			}
-		},false);
+		demobo.mapInputEvents( {
+			'nextButton' : 		nextPage,
+			'previousButton' : 	prevPage,
+			'notesSlider':		setSlide,
+			'demoboApp' : 		onReady,
+			'demoboVolume' : 	onVolume
+		});
+		// demobo.addEventListener('input',function(e) {
+			// var playerIndex = demobo.getPlayerIndex(e.deviceID);
+			// if (playerIndex>0) return;
+			// if (e.source=='demoboVolume') {
+				// if (e.value=="down") {
+					// prevPage();
+				// } else if (e.value=="up") {
+					// nextPage();
+				// }
+			// }
+		// },false);
 		demobo.addEventListener('swipe',function(e) {
 			var playerIndex = demobo.getPlayerIndex(e.deviceID);
 			if (playerIndex>0) return;
@@ -54,6 +69,39 @@ if (typeof DEMOBO != 'undefined') {
 $(function(){
 	setupEvents();
 });
+function onReady() {
+	refreshController();
+}
+function refreshController() {
+	demobo.callFunction('loadNotes', getNotes());
+	setCurrentPage(1);
+}
+function setCurrentPage(num) {
+	curPage = parseInt(num);
+	demobo.callFunction('setCurrentPage', num);
+}
+function getCurrentPageNumber() {
+	return curPage;
+}
+function getPageCount() {
+	return totalPage;
+}
+function getNotes() {
+	var toReturn = [];
+	if (totalPage) {
+		for (var i=0; i<totalPage; i++) {
+			var s = {
+				'note' : speakernotes.notes[i]?speakernotes.notes[i]:""
+			};
+			toReturn.push(s);
+		}
+	}
+	return toReturn;
+}
+function onVolume(value) {
+	if (value=='up') nextPage();
+	else if (value=='down') prevPage();
+}
 function setupEvents() {
 	$('#fullscreenMask').dblclick(normalScreen);
 	$( "#tabs" ).tabs();
@@ -102,10 +150,34 @@ function setupEvents() {
 		saveSpeakernotes();
 	});
 	$('#speakernotearea').bind('input propertychange', function() {
-	      speakernotes.notes[curPage-1]=$(this).val();
+	    speakernotes.notes[curPage-1]=$(this).val();
 	});
 	$('#pdfviewer').dblclick(toggleScreen);
+	$(audio).bind('timeupdate', function() {
+		timer = audio.currentTime*1000;
+		if (timer==0) {
+			replayCounter=1;
+			replayMoment=0;
+			replaySequence = speakernotes.sequence.slice(1);
+			replayMoment = replaySequence.shift();
+			setSlide(1);
+		}
+		if (replayMoment) {
+			var replayTimer = replayMoment.t-speakernotes.sequence[0].t;
+			if (timer>replayTimer) {
+				if (replayMoment.a>0) setSlide(replayMoment.a);
+				replayMoment=null;
+				if (replaySequence.length) {
+					replayMoment = replaySequence.shift();
+				}	
+			}	
+		}
+	});
 }
+
+var timer=0;
+var replaySequence=[];
+var replayMoment;
 
 var appData = {};
 var flashMovie;
@@ -140,8 +212,8 @@ function loadSpeakernotes(url) {
 	
 }
 function saveSpeakernotes() {
-	console.log(speakernotes);
 	$.post("create", speakernotes);
+	demobo.callFunction('loadNotes', getNotes());
 }
 function loadDoc(doc) {
 	var docstr = doc.split('~');
@@ -218,39 +290,44 @@ function setPage() {
 function nextPage() {
 	if (curPage>=totalPage) return;
 	if ($('#pdfviewer').is(":visible")) {
-		curPage ++;
-		$('#pdfviewer').animate({
-            scrollTop: '+='+$('#pdfviewer').height()
-        }, 'slow');
-        setPage();
+		setSlide(curPage+1);
 	}
-	var t = new Date().getTime();
-	if (isRecording) speakernotes.sequence.push({t:t, a: 'n'});
 }
 function prevPage() {
 	if (curPage<=1) return;
 	if ($('#pdfviewer').is(":visible")) {
-		curPage --;
-		if (curPage<=0) {
+		if (curPage<=1) {
 			curPage = 1;
 			setPage();
 			return;
 		}
-		$('#pdfviewer').animate({
-            scrollTop: '-='+$('#pdfviewer').height()
-        }, 'slow');
-        setPage();
+		setSlide(curPage-1);
 	}
-	var t = new Date().getTime();
-	if (isRecording) speakernotes.sequence.push({t:t, a: 'p'});
+}
+function setSlide(num) {
+	var diff = num - curPage;
+	if (diff>0) {
+		$('#pdfviewer').animate({
+	        scrollTop: '+='+($('#pdfviewer').height()*diff)
+	    }, 'slow');
+	} else {
+		$('#pdfviewer').animate({
+	        scrollTop: '-='+(-1*$('#pdfviewer').height()*diff)
+	    }, 'slow');
+	}
+	setCurrentPage(num);
+	setPage();
+	if (isRecording) speakernotes.sequence.push({t:new Date().getTime(), a: num});
 }
 function toggleRecord() {
 	isRecording = !isRecording;
 	if (isRecording) {
+		startRecording();
 		$('.recordButton').css('color','red');
 		var t = new Date().getTime();
 		speakernotes.sequence = [{t:t, a: 's'}];
 	} else {
+		stopRecording();
 		$('.recordButton').css('color','');
 	}
 }
@@ -411,7 +488,7 @@ function uploadFile(file) {
     var x = 0;
     var y = 0;
     $.each(dataArray, function(index, fileData) {
-    		if (file.size>500000) {
+    		if (file.size>5000000) {
     			showMessage('Beta Version only supports files less than 500KB. Please upload files to <div class="appLink" href="http://www.slideshare.net/upload" target="_blank">slideshare.net</div> or <div class="appLink" href="https://drive.google.com" target="_blank">drive.google.com</div>'
     					+'<br><br><div class="appLink" href="http://www.slideshare.net/upload" target="_blank">Here</div> is how to upload pdf and ppt to slideshare.net.'
     	    			+'<br><br><div class="appLink" href="https://support.google.com/drive/bin/answer.py?hl=en&answer=186466" target="_blank">Here</div> is how to convert pdf and ppt into Google Presentation.'
@@ -419,7 +496,7 @@ function uploadFile(file) {
     	    			, 'Document too large.');
     			return;
     		}
-            $.post('http://net.demobo.com/dnd/upload.php', dataArray[index], function(data) {
+            $.post('http://net.demobo.com/dnd/uploadbig.php', dataArray[index], function(data) {
                     var fileName = dataArray[index].name;
                     ++x;
                     if(totalPercent*(x) == 100) {
@@ -443,4 +520,45 @@ function uploadFile(file) {
             });
     });
     return false;
+}
+
+
+
+
+
+var onFail = function(e) {
+	console.log('Rejected!', e);
+};
+
+var onSuccess = function(s) {
+	var context = new webkitAudioContext();
+	var mediaStreamSource = context.createMediaStreamSource(s);
+	recorder = new Recorder(mediaStreamSource);
+	recorder.record();
+
+	// audio loopback
+	// mediaStreamSource.connect(context.destination);
+}
+
+window.URL = window.URL || window.webkitURL;
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+var recorder;
+var audio = document.querySelector('audio');
+
+function startRecording() {
+	if (navigator.getUserMedia) {
+		navigator.getUserMedia({
+			audio : true
+		}, onSuccess, onFail);
+	} else {
+		console.log('navigator.getUserMedia not present');
+	}
+}
+
+function stopRecording() {
+	recorder.stop();
+	recorder.exportWAV(function(s) {
+		audio.src = window.URL.createObjectURL(s);
+	});
 }
