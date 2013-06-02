@@ -1,0 +1,66 @@
+extends layout
+
+block content
+  h1 Ever Speaker Note
+  p
+    |  - cloud presentation
+  hr
+  - if(session.error)
+    h2 Error
+    p
+      = session.error
+  h2 Authentication
+  - if(session.oauthAccessToken)
+    a(href='/clear') Click here
+    |  to 
+    | start over
+    br
+    br
+    | Node Title:
+    br
+    input(type='text', name='ntitle')
+    br
+    | Node Content:
+    br
+    input(type='text', name='ncontent')
+    br
+    a(href='/create') Click here
+    |  to 
+    | Create a Note
+    br
+  - else
+    a(href='/oauth') Click here
+    |  to 
+    | connect Evernote
+
+  hr
+  - if(session.notebooks)
+    h2 Notebooks
+    ul
+      - for (var i = 0; i < session.notebooks.length; ++i)
+        li= session.notebooks[i].name
+    hr
+  h2 Current status
+  ul
+    li
+      b NoteStore URL:  
+      = session.edamNoteStoreUrl
+    li
+      b Web API URL prefix: 
+      = session.edamNoteStoreUrl
+  h3 Token Credentials:
+  ul
+    li
+      b token:  
+      = session.oauthAccessToken
+    li
+      b secret:  
+      = session.oauthAccessTokenSecret
+    li
+      b User ID:  
+      = session.edamUserId
+    li
+      b Expires:  
+      = session.edamExpires
+      
+    
