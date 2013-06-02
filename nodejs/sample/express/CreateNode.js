@@ -1,7 +1,9 @@
-exports.createnote = function(authToken, title ,content) {
+var Evernote = require('evernote').Evernote;
+var noteStore;
+
+exports.createnote = function(authToken, pdfObj) {
 	fs = require('fs');
 	crypto = require('crypto');
-	Evernote = require('evernote').Evernote;
 
 	//
 	// A simple Evernote API demo script that lists all notebooks in the user's
@@ -43,7 +45,7 @@ exports.createnote = function(authToken, title ,content) {
 		}
 	});
 
-	var noteStore = client.getNoteStore();
+	noteStore = client.getNoteStore();
 
 	// List all of the notebooks in the user's account
 	var notebooks = noteStore.listNotebooks(function(notebooks) {
@@ -52,13 +54,18 @@ exports.createnote = function(authToken, title ,content) {
 			console.log("  * " + notebooks[i].name);
 		}
 	});
+	
+	CreateNoteUnderNotebook(pdfObj.id, pdfObj.id, null);
+}
 
+function CreateNoteUnderNotebook(title, content, notebook_guid)
+{
 	// To create a new note, simply create a new Note object and fill in
 	// attributes such as the note's title.
 	var note = new Evernote.Note();
-	//note.title = "Test note from EDAMTest.js";
-	note.title=title;
-	
+	note.title = title;
+	note.notebookGuid = notebook_guid;
+
 	// To include an attachment such as an image in a note, first create a Resource
 	// for the attachment. At a minimum, the Resource contains the binary attachment
 	// data, an MD5 hash of the binary data, and the attachment MIME type.
@@ -90,19 +97,19 @@ exports.createnote = function(authToken, title ,content) {
 	// at http://dev.evernote.com/documentation/cloud/chapters/ENML.php
 	note.content = '<?xml version="1.0" encoding="UTF-8"?>';
 	note.content += '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">';
-	note.content += '<en-note>' + content + '<br/>';
+	note.content += '<en-note>'+ content +'<br/>';
 	note.content += '<en-media type="image/png" hash="' + hashHex + '"/>';
 	note.content += '</en-note>';
 
 	// Finally, send the new note to Evernote using the createNote method
 	// The new Note object that is returned will contain server-generated
 	// attributes such as the new note's unique GUID.
+	console.log(note);
+	
 	noteStore.createNote(note, function(createdNote) {
 		console.log();
 		console.log("Creating a new note in the default notebook");
 		console.log();
 		console.log("Successfully created a new note with GUID: " + createdNote.guid);
 	});
-
 }
-

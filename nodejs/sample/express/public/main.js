@@ -128,6 +128,7 @@ function loadSpeakernotes(id) {
 }
 function saveSpeakernotes() {
 	console.log(speakernotes);
+	$.post("create", speakernotes);
 }
 function loadDoc(doc) {
 	var docstr = doc.split('~');
