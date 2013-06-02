@@ -23,9 +23,10 @@ html
         .navbox
           ul#tab-labels.nav
             li#tab-label0
-              a(onclick='')
-                i.ico-user.ico-white
-                span Sign in
+              - if(session.oauthAccessToken)
+                a(href='/clear') Sign Out
+              - else
+                a(href='/oauth') Sign In
             li#tab-label1
               a.connect(onclick='showQR()')
                 i.ico-signal-alt.ico-white
