@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+    <head>
+		<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-33969241-1']);
+		_gaq.push(['_setDomainName', 'presentationdocs.com']);
+		_gaq.push(['_trackPageview']);
+		(function() {
+		  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+		</script>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Presentation Remote - Use your smartphone as a presentation remote to control slideshare.net, google presentation, scribd.com and powerpoint slideshow.</title>
+        <link rel="icon" type="image/png" href="icon_black_128.png"/>
+        <!-- include jQuery and demobo library-->
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" type="text/css" media="all" />
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="http://public.slidesharecdn.com/javascripts/swfobject_playerapi.js"></script>
+        <script type='text/javascript' src='http://www.scribd.com/javascripts/scribd_api.js'></script>
+        <script type="text/javascript" src="http://api.demobo.com/demobo.1.6.4.min.js"></script>
+		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
+        <!-- include jQuery and demobo library -->
+		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="presentation_remote.css" />
+		<link rel="stylesheet" type="text/css" href="icons.css" />
+		<!--Start of Zopim Live Chat Script-->
+		<script type="text/javascript">
+		window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
+		d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
+		_.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute('charset','utf-8');
+		$.src='//cdn.zopim.com/?yUlZMlln6qDfObYzYoZiApbspV3KB8vW';z.t=+new Date;$.
+		type='text/javascript';e.parentNode.insertBefore($,e)})(document,'script');
+		</script>
+		<!--End of Zopim Live Chat Script-->
+		<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/oichkmlpbknppmikofjkafoifgpnilph">
+		<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/fjdgmdaaacgdbfdohoidfjiipmbnbnho">
+		<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/mgoggfiblaeihbhpnplbkaeeeockebih">
+		<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/aopkakfkhllgogflkeoejmmmngcmaohf">
+		<link rel="chrome-webstore-item" href="https://chrome.google.com/webstore/detail/ncmdkablpbcponmaakaekfjfaicfjado">
+    </head>
+    <body class="preload" oncontextmenu="return true;">
+    	<div id="fb-root"></div>
+	    <div id="header-container">
+	    	<div id="drop-box" ondragover="return false" class="appLink" href="https://chrome.google.com/webstore/detail/presentation-remote/mhfdnafbhfglkcjgkgoopjoadaopcomi">
+	    		<!--<img src='icon_black_128.png'></img>-->
+                Presentation Remote
+            </div>
+			<div class="help"><button class="btn btn-inverse"><i class="ico-circle-question-mark ico-white"></i><span>Help</span></button></div>
+        </div>
+		<div class="social popoverLove">
+			<div class="fb-like" data-href="https://chrome.google.com/webstore/detail/presentation-remote/mhfdnafbhfglkcjgkgoopjoadaopcomi" data-send="false" data-layout="button_count" data-width="450" data-show-faces="true"></div>			
+			
+			<a href="https://twitter.com/share" class="twitter-share-button" data-url="https://chrome.google.com/webstore/detail/presentation-remote/mhfdnafbhfglkcjgkgoopjoadaopcomi" data-text="Check out this app" data-via="de_mobo">Tweet</a>
+
+			<div class="g-plusone" data-size="medium" data-href="https://chrome.google.com/webstore/detail/presentation-remote/mhfdnafbhfglkcjgkgoopjoadaopcomi"></div>
+
+			<div class="review"><div class="appLink" href="https://chrome.google.com/webstore/detail/presentation-remote/mhfdnafbhfglkcjgkgoopjoadaopcomi/reviews" target="_blank">Like this app? Rate it 5 stars.</div></div>
+		</div>
+        <div id="wrapper" class="">
+            <div id="left-container">
+				<div class="navbox">
+	                <ul id="tab-labels" class="nav">
+	                	<li id='tab-label0' class='selected'>
+	                        <a title="We proudly support the following websites and file formats" onclick='clickTab(0)'>
+	                        	<i class="ico-show-big-thumbnails ico-white"></i><span>Features</span></a>
+	                    </li>
+						<li id='tab-label1'>
+	                        <a class="popoverHint connect" onclick='showQR()'><i class="ico-signal-alt ico-white"></i><span>Connect</span></a>
+	                    </li>
+						<li id='tab-label2'>
+	                        <a title="This helps users quickly to locate files they presented previously" onclick='clickTab(2)'><i class="ico-list ico-white"></i>
+							<span>Recent Files</span><span class="label">0</span></a>
+	                    </li>
+	                	<li id='tab-label3'>
+	                        <a title="This extension supports speaker notes" onclick='showSpeakerNotes()'><i class="ico-keynote ico-white"></i><span>Speaker Notes</span></a>
+	                    </li>
+						<!--<li>
+	                        <a title="Tell us what you need so we can build it for you" id='tab-label3' onclick='showFeedback()'><i class="icon icon-tint"></i><span>Feedback</span></a>
+	                    </li>-->
+	                </ul>
+	            </div>
+				<div id="settings">
+					<label class="info" for="motionSensor" onclick="">Motion Sensor</label>
+					<ul id="checked" class="popoverHint">
+						<li>
+							<p>
+								<input type="checkbox" id="motionSensor" name="motionSensor"/>
+								<label class="check" for="motionSensor" onclick=""></label>
+							</p>
+						</li>
+					</ul>
+				</div>
+				<div id="download" class="popoverHint">
+					<div class="appLink" title="Get the Android remote control here" href="http://play.google.com/store/apps/details?id=com.demobo.mobile" target="_blank">
+						<img src="badge_android.png"/>
+					</div>
+					<div class="appLink" title="Get the iPhone remote control here" href="http://itunes.apple.com/us/app/de-mobo/id519605488?ls=1&mt=8" target="_blank">
+						<img src="app_store.png"/>
+					</div>
+				</div>
+				<div class="poweredby">
+					powered by <div class="appLink" href="http://www.demobo.com" target="_blank">de Mobo</div>
+				</div>
+			</div>
+			<div id="app-container" class="box lifted drop-shadow">
+            <div id='mid-container'>
+                <div id="tabs-2" class="rightPanel" style="display:none">
+                    <div id="panelTitle">
+                        Recent Files
+                    </div>
+                    <div class="block">
+                        <div id="recentDocs">
+                        </div>
+                    </div>
+                </div>
+                <div id="tabs-0" class="rightPanel">
+                    <div id="panelTitle">
+                        Features
+                    </div>
+                    <div class="block">
+                    	<div class="item" onclick="showInfoGoogle()">
+                            <div class="link">
+                                <div class="icon googleDocs">
+                                </div>Google Drive
+                            </div>
+                        </div>
+                        <div class="item" onclick="showInfoSlideshare()">
+                            <div class="link">
+                                <div class="icon slideShare">
+                                </div>Slideshare
+                            </div>
+                        </div>
+                        <div class="item" onclick="showInfoScribd()">
+                            <div class="link">
+                                <div class="icon scribd">
+                                </div>Scribd
+                            </div>
+                        </div>
+						<div class="item" onclick="showInfoDropbox()">
+                            <div class="link">
+                                <div class="icon dropbox">
+                                </div>Dropbox
+                            </div>
+                        </div>
+                        <div class="item" onclick="showInfoPDF()">
+                            <div class="link">
+                                <div class="icon pdf">
+                                </div>PDF and PPT
+                            </div>
+                        </div>
+                        <!--<div class="item" onclick="showInfoPDF()">
+                            <div class="link">
+                                <div class="icon ppt">
+                                </div>Power Point
+                            </div>
+                        </div>
+                        <div class="item" onclick="showInfoPDF()">
+                            <div class="link">
+                                <div class="icon doc">
+                                </div>Word Document
+                            </div>
+                        </div>-->
+						<div class="item">
+							<div class="link">
+							</div>	
+						</div>
+						<div class="item installLink" href="https://chrome.google.com/webstore/detail/mgoggfiblaeihbhpnplbkaeeeockebih">
+                            <div>
+                                <div class="icon new">
+                                </div>Use de Mobo as a remote on Pandora, Grooveshark, Last FM ...
+                            </div>
+                        </div>
+						<div class="item installLink" href="https://chrome.google.com/webstore/detail/aopkakfkhllgogflkeoejmmmngcmaohf">
+                            <div>
+                                <div class="icon new">
+                                </div>Use de Mobo as a TV remote on YouTube and Vimeo Couch Mode
+                            </div>
+                        </div>
+						<div class="item installLink" href="https://chrome.google.com/webstore/detail/ncmdkablpbcponmaakaekfjfaicfjado">
+                            <div>
+                                <div class="icon new">
+                                </div>Use de Mobo as a quiz buzzer on this trivia game
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--<div id="tabs-3" class="rightPanel" style='display:none'>
+                    <div id="panelTitle">
+                        Feedback
+                    </div>
+                    <div class="block">
+
+                    </div>
+                </div>-->
+            </div>
+	            <div id="right-container" class="tucked-corners top-corners">
+	            	<div id="fullscreenhint"></div>
+					<div id="cnpdiv" class="popoverHint"><input id="cnp" type="text" title="Copy & Paste Presentation URL Here"></input></div>
+	            	<div id="player">
+	            	</div>
+	                <div id='scribd' class="docFrame">
+	                    <a href="http://www.scribd.com">Scribd</a>
+	                </div>
+	                <iframe id="googledoc" class="docFrame" frameborder="1" width="820" height="649" wmode="transparent" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true">
+	                </iframe>
+	                <div id="pdfviewer" class="docFrame">
+	                </div>
+	                <img id='phoneImg' src='presentationApp.png'>
+	                </img>
+					<span class="tucked-corners bottom-corners"></span>
+	            </div>
+			</div>
+            <div id="footer-container">
+            </div>
+            <script type="text/javascript" src="presentation_remote.js">
+            </script>
+            </div>
+            <div id="dialog" title="Message:">
+                <p id="dialogBody">
+                </p>
+                <center>
+                    <div class="main img">
+                        <div id="qrcode">
+                        </div>
+                    </div>
+                </center>
+				<!--<div id="disqus_thread" class="disqusPanel" style='color:black; display: none;'>
+                </div>
+                <script type="text/javascript">
+                    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+                    var disqus_shortname = 'presentationdocs'; // required: replace example with your forum shortname
+                    //                        var disqus_developer = 1;
+                    /* * * DON'T EDIT BELOW THIS LINE * * */
+                    (function(){
+                        var dsq = document.createElement('script');
+                        dsq.type = 'text/javascript';
+                        dsq.async = true;
+                        dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+                    })();
+                </script>
+                <noscript>
+                    Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+                </noscript>
+                <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>-->
+            </div>
+            <div id="fullscreenMask">
+            </div>
+        </body>
+    </html>

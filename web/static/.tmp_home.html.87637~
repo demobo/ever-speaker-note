@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Presentation Docs - Use your smartphone as a presentation remote to control slideshare.net, google presentation, scribd.com and powerpoint slideshow.</title>
+        <link rel="icon" type="image/ico" href="favicon.ico">
+        <!-- include jQuery and demobo library-->
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.20/themes/base/jquery-ui.css" type="text/css" media="all" />
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js">
+        </script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js">
+        </script>
+        <script type="text/javascript" src="http://public.slidesharecdn.com/javascripts/swfobject_playerapi.js">
+        </script>
+        <script type='text/javascript' src='http://www.scribd.com/javascripts/scribd_api.js'>
+        </script>
+        <script type="text/javascript" src="http://api.demobo.com/js_core.js">
+        </script>
+        <script type="text/javascript" src="firstPlugin.js">
+        </script>
+        <!-- include jQuery and demobo library -->
+        <link rel="stylesheet" type="text/css" href="home.css" />
+    </head>
+    <body>
+    	<div id="wrapper">
+	        <div id="header-container">
+	            <!--<div class="logo">
+	                <img src="logo2.png">
+	                <div id="headerTitle">
+	                    presentation docs by <a href="http://itunes.apple.com/us/app/de-mobo/id519605488?ls=1&mt=8">de Mobo</a>
+	                </div>
+	            </div>-->
+	        </div>
+	        <div id="main-container">
+	            <div id='tab-labels'>
+	            	<div id='tab-label1' class='selected' onclick='clickTab(1)'>
+	                    Features
+	                </div>
+	                <div id='tab-label0' onclick='showQR()'>
+	                    Connect Phone
+	                </div>
+	                <div id='tab-label2' class='' onclick='clickTab(2)'>
+	                    Recent Files
+	                </div>
+	                <div id='tab-label3' class='' onclick='clickTab(3)'>
+	                    Feedback
+	                </div>
+	            </div>
+	            <div id='tab-part2'>
+	                <div id="tabs-2" class="rightPanel" style="display:none">
+	                	<div id="panelTitle">Recent Files</div>
+	                    <div class="block">
+	                        <div id="recentDocs">
+	                        </div>
+	                    </div>
+	                </div>
+	                <div id="tabs-1" class="rightPanel">
+	                	<div id="panelTitle">Features</div>
+	                    <div class="block">
+	                        <div class="item" onclick="window.open('http://slideshare.net')">
+	                            <div class="link"><div class="icon slideShare"></div>slideshare.net</div>
+	                        </div>
+	                        <div class="item" onclick="window.open('http://docs.google.com')">
+	                            <div class="link"><div class="icon googleDocs"></div>google docs presentation</div>
+	                        </div>
+	                        <div class="item" onclick="window.open('http://scribd.com')">
+	                            <div class="link"><div class="icon scribd"></div>scribd.com</div>
+	                        </div>
+							<div class="item" onclick="showInfoPDF()">
+	                            <div class="link"><div class="icon pdf"></div>PDF</div>
+	                        </div>
+							<div class="item" onclick="showInfoPDF()">
+	                            <div class="link"><div class="icon ppt"></div>Power Point</div>
+	                        </div>
+							<div class="item" onclick="showInfoPDF()">
+	                            <div class="link"><div class="icon doc"></div>Word Document</div>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div id="tabs-3" class="rightPanel" style='display:none'>
+	                	<div id="panelTitle">Feedback</div>
+	                    <div class="block">
+		                    <div id="disqus_thread" class="disqusPanel" style='color:black'>
+		                    </div>
+		                    <script type="text/javascript">
+		                        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+		                        var disqus_shortname = 'presentationdocs'; // required: replace example with your forum shortname
+		                        //                        var disqus_developer = 1;
+		                        /* * * DON'T EDIT BELOW THIS LINE * * */
+		                        (function(){
+		                            var dsq = document.createElement('script');
+		                            dsq.type = 'text/javascript';
+		                            dsq.async = true;
+		                            dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+		                            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+		                        })();
+		                    </script>
+		                    <noscript>
+		                        Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+		                    </noscript>
+		                    <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+						</div>
+	                </div>
+	            </div>
+	        </div>
+	        <div id="view-container">
+				<div id="player">
+		        </div>
+		        <input id="cnp" type="text" title="COPY & PASTE DOC LINK HERE">
+		        </input>
+		        <div id="drop-box" ondragover="return false">
+		            DRAG & DROP DOC LINK HERE
+		        </div>
+		        <div id='scribd' class="docFrame">
+		            <a href="http://www.scribd.com">Scribd</a>
+		        </div>
+		        <iframe id="googledoc" class="docFrame" frameborder="1" width="820" height="649" wmode="transparent" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true">
+				</iframe>
+				<div id="pdfviewer" class="docFrame">
+		    	</div>
+		        <div id="pointer" class="player">
+		        </div>
+		        <img id='phoneImg' src='presentationApp.png'>
+		        </img>
+			</div>
+	        <div id="download-container">
+	            <a href="http://play.google.com/store/apps/details?id=com.demobo.mobile" target="_blank"><img src="badge_android.png"></a><a href="http://itunes.apple.com/us/app/de-mobo/id519605488?ls=1&mt=8" target="_blank"><img src="app_store.png"></a>
+	        </div>
+	        <div id="footer-container">
+	        </div>
+	        <script type="text/javascript" src="home.js">
+	        </script>
+		</div>
+		<div id="dialog" title="Message:">
+            <p>
+            </p>
+            <center>
+                <div class="main img">
+                    <div id="qrcode">
+                    </div>
+                </div>
+            </center>
+        </div>
+		<div id="fullscreenMask"></div>
+        </body>
+    </html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Presentation Docs - Use your smartphone as a presentation remote to control slideshare.net, google presentation, scribd.com and powerpoint slideshow.</title>
+		<link rel="icon" type="image/ico" href="favicon.ico">
+		<!-- include jQuery and demobo library-->
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.8.20/themes/base/jquery-ui.css" type="text/css" media="all" />
+		<link rel="stylesheet" type="text/css" href="baseline.css" />
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="http://public.slidesharecdn.com/javascripts/swfobject_playerapi.js"></script>
+		<script type='text/javascript' src='http://www.scribd.com/javascripts/scribd_api.js'></script>  
+		<script type="text/javascript" src="http://api.demobo.com/js_all.js"></script>
+		<!-- include jQuery and demobo library -->
+		<link rel="stylesheet" type="text/css" href="main.css"/>
+</head>
+<body>
+  <div id="header-container">
+    <div class="one columns" style="padding-left: 10px;">
+      <img src="logo2.png">
+    </div>
+    <div id="demobo" class="demobo">
+			<h1>presentation docs by <a href="http://itunes.apple.com/us/app/de-mobo/id519605488?ls=1&mt=8">de Mobo</a></h1>
+		</div>
+		<div class="demobo" style="float:right;"><a href="http://itunes.apple.com/us/app/de-mobo/id519605488?ls=1&mt=8"><img src="app_store.png" width="100" height="35"></a></div>
+  </div>
+  <div id='tab-labels'>
+    <div id='tab-label1' class='selected' onclick='clickTab(1)'><div>Presentation</div></div>
+    <div id='tab-label2' class='' onclick='clickTab(2)'><div>Set up</div></div>
+    <div id='tab-label3' class='' onclick='clickTab(3)'><div>Feedback</div></div>
+    <img id='phoneImg' src='presentationApp.png'></img>
+
+  </div>
+  <div id='tab-part2'>
+    <div id="tabs-2" class="rightPanel disqusPanel" style="display:none">
+		  <div class="">
+			  <h4 id="panelTitle" style="color: #363636;margin-left:25px;">Scan QR with de Mobo</h4>
+			  <hr></hr>
+			  <center><div class="main img"><div id="qrcode"></div></div></center>
+			  <center><div class="main img"><div id="recentDocs"></div></div></center>
+		  </div>
+    </div>
+    <div id="tabs-1" class="rightPanel four columns">
+	    <div class="block">
+			    <p class="info" style="margin: 10px; word-wrap:break-word;">Websites Supported:</p>
+			    <div class="icon slideShare"><a href="http://slideshare.net" target="_blank">slideshare.net</a></div>
+			    <div class="icon googleDocs"><a href="http://docs.google.com" target="_blank">google docs presentation</a></div>
+			    <div class="icon scribd"><a href="http://scribd.com" target="_blank">scribd.com</a></div>
+			    <br><br><br>
+			    <p class="info" style="margin: 0px 10px;">Copy & Paste doc link below</p>
+			    <input id="cnp" type="text"></input>
+			    <br>
+          <br>
+			    <p class="info" style="text-align:center;">or</p>
+          <br>
+		    <div id="drop-box">
+			    <p class="info" style="margin: 10px;text-align:center">Drag & Drop doc link here</p>
+			    <p id="owner" class="info" style="margin: 10px;"></p>
+			    <p id="info" class="info" style="margin: 5px;"></p>
+		    </div>
+	    </div>
+	  </div>
+	  <div id="tabs-3" class="rightPanel disqusPanel" style='display:none'>
+		  <div id="disqus_thread" style='color:black'></div>
+		  <script type="text/javascript">
+		  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+		  var disqus_shortname = 'presentationdocs'; // required: replace example with your forum shortname
+//		var disqus_developer = 1;
+		  /* * * DON'T EDIT BELOW THIS LINE * * */
+		  (function() {
+		      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+		      dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
+		      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+		  })();
+		  </script>
+		  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+		  <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
+	  </div>
+
+  </div>
+  <div id="player"></div>
+  <div id='scribd' class="docFrame"><a href="http://www.scribd.com">Scribd</a></div>
+  <iframe id="googledoc" class="docFrame" frameborder="1" width="820" height="649" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+  <div id="pointer" class="player"></div>
+  <div style="bottom: 3px;position: absolute;left: 50px;"><a href="http://itunes.apple.com/us/app/de-mobo/id519605488?ls=1&mt=8"><img src="app_store.png"></a></div>
+  <div id="dialog" title="Message:">
+	  <p></p>
+  </div>
+  <script type="text/javascript" src="firstPlugin.js"></script>
+  <script type="text/javascript" src="main.js"></script>
+</body>
+</html>
