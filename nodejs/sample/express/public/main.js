@@ -198,12 +198,12 @@ var maxFiles = 1;
 var errMessage = 0;
 //Get all of the data URIs and put them in an array
 var dataArray = [];
-
+var audioSrcArray = {};
 function loadSpeakernotes(url) {
 	var title = url.split('/').reverse();
 	title = title[0];
 	speakernotes = {"id": title, "url": url, notes: [], sequence: [], audio: ""};
-	var audioSrc = localStorage["audio_"+speakernotes.id];
+	var audioSrc = audioSrcArray["audio_"+speakernotes.id];
 	if (audioSrc) audio.src = audioSrc;
 	$.get("retrieve", "title=" + title, function(data){
 		console.log(data);
@@ -215,7 +215,7 @@ function loadSpeakernotes(url) {
 function saveSpeakernotes() {
 	$.post("create", speakernotes);
 	demobo.callFunction('loadNotes', getNotes());
-	localStorage["audio_"+speakernotes.id]=audio.src;
+	audioSrcArray["audio_"+speakernotes.id]=audio.src;
 }
 function loadDoc(doc) {
 	var docstr = doc.split('~');
@@ -447,6 +447,8 @@ function showQR() {
 }
 
 function showSpeakerNotes() {
+	showMessage('http://everyspeakernote.com/'+speakernotes.id,
+				'Replay this presentation with the following url', true);
 }
 function handleDropFiles(files) {
 	// For each file
@@ -561,7 +563,6 @@ function startRecording() {
 function stopRecording() {
 	recorder.stop();
 	recorder.exportWAV(function(s) {
-		localStorage['jeff']=s;
 		audio.src = window.URL.createObjectURL(s);
 	});
 }
