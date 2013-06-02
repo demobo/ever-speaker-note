@@ -55,7 +55,7 @@ $(function(){
 	setupEvents();
 });
 function setupEvents() {
-	$('#fullscreenMask').click(normalScreen);
+	$('#fullscreenMask').dblclick(normalScreen);
 	$( "#tabs" ).tabs();
 	$('body').bind('dragover', function (e) {
 	    e.preventDefault();
@@ -95,12 +95,16 @@ function setupEvents() {
 	$('.btn-group').on('click', '.nextButton', function(){
 		nextPage();
 	});
+	$('.btn-group').on('click', '.recordButton', function(){
+		toggleRecord();
+	});
 	$('#saveButton').on('click', function(){
 		saveSpeakernotes();
 	});
 	$('#speakernotearea').bind('input propertychange', function() {
 	      speakernotes.notes[curPage-1]=$(this).val();
 	});
+	$('#pdfviewer').dblclick(toggleScreen);
 }
 
 var appData = {};
@@ -111,6 +115,7 @@ var scribd_doc;
 var curPresentationId;
 var dragElement = null;
 var speakernotes = {};
+var isRecording = false;
 
 //Makes sure the dataTransfer information is sent when we
 //Drop the item in the drop box.
@@ -122,8 +127,10 @@ var errMessage = 0;
 //Get all of the data URIs and put them in an array
 var dataArray = [];
 
-function loadSpeakernotes(id) {
-	speakernotes = {"id": id, notes: ["note 1","note2"], sequence: [], audio: ""};
+function loadSpeakernotes(url) {
+	var title = url.split('/').reverse();
+	title = title[0];
+	speakernotes = {"id": title, "url": url, notes: ["note 1","note2"], sequence: [], audio: ""};
 	console.log(speakernotes);
 }
 function saveSpeakernotes() {
@@ -211,6 +218,8 @@ function nextPage() {
         }, 'slow');
         setPage();
 	}
+	var t = new Date().getTime();
+	if (isRecording) speakernotes.sequence.push({t:t, a: 'n'});
 }
 function prevPage() {
 	if (curPage<=1) return;
@@ -225,6 +234,18 @@ function prevPage() {
             scrollTop: '-='+$('#pdfviewer').height()
         }, 'slow');
         setPage();
+	}
+	var t = new Date().getTime();
+	if (isRecording) speakernotes.sequence.push({t:t, a: 'p'});
+}
+function toggleRecord() {
+	isRecording = !isRecording;
+	if (isRecording) {
+		$('.recordButton').css('color','red');
+		var t = new Date().getTime();
+		speakernotes.sequence = [{t:t, a: 's'}];
+	} else {
+		$('.recordButton').css('color','');
 	}
 }
 function addUser(e) {

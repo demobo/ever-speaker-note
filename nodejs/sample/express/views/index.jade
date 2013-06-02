@@ -61,15 +61,15 @@ html
           textarea#speakernotearea
           .btn-toolbar
             .btn-group
-              a.recordButton.btn.btn-large(href='#')
+              a.recordButton.btn.btn-inverse(href='#')
                 i.icon-bullseye
-              a.playButton.btn.btn-large(href='#')
-                i.icon-play
-              a.prevButton.btn.btn-large(href='#')
+              a.prevButton.btn.btn-inverse(href='#')
                 i.icon-step-backward
-              a.nextButton.btn.btn-large(href='#')
+              a.nextButton.btn.btn-inverse(href='#')
                 i.icon-step-forward
-          button#saveButton.btn.btn-large(type='button')
+              audio(controls='controls')
+                source(src='horse.mp3', type='audio/mpeg')  
+          button#saveButton.btn.btn-inverse(type='button')
             | Save
       #footer-container
     #dialog(title='Message:')
