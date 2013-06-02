@@ -56,13 +56,13 @@ exports.createnote = function(authToken, pdfObj) {
 	// });
 	
 	CreateNotebook(authToken, "Every Speaker Note", function(notebook){
-		
+		console.log('59 - CreateNotebook');
 		FindNote(authToken, pdfObj.id, function(note) {
-			if (note) {
-				UpdateNote(authToken, note, pdfObj, function(note){
+			if (note == null) {
+				CreateNote(pdfObj, notebook, function(note){
 				});
 			} else {
-				CreateNote(pdfObj, notebook, function(note){
+				UpdateNote(authToken, note, pdfObj, function(note){
 				});
 			}
 		})
@@ -136,14 +136,16 @@ function CreateNote(pdf, notebook, callback)
 	// at http://dev.evernote.com/documentation/cloud/chapters/ENML.php
 	 note.content = '<?xml version="1.0" encoding="UTF-8"?>';
 	 note.content += '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">';
-	 note.content += '<en-note>'+ JSON.stringify(pdf) + '</en-note>';
+	 note.content += '<en-note>'+ JSON.stringify(pdf) +'<br/>';
+	 note.content += '<en-media type="image/png" hash="' + hashHex + '"/>';
+	 note.content += '</en-note>';
 	
 	//note.content = JSON.stringify(pdf);
 
 	// Finally, send the new note to Evernote using the createNote method
 	// The new Note object that is returned will contain server-generated
 	// attributes such as the new note's unique GUID.
-	console.log(note);
+	console.log('148' + note.title);
 	
 	noteStore.createNote(note, function(note) {
 		console.log();
@@ -182,32 +184,45 @@ function FindNote(authToken, title, callback) {
 				noteStore.getNote(authToken, notes[i].guid, true, false, false, false, function(note){
 					callback(note);
 				});
+				return;
 			}
 		}
+		callback(null);
 	});
 }
 
 function UpdateNote(authToken, note, pdf, callback) {
+
 	var client = new Evernote.Client({
 		token : authToken,
 		sandbox : true
 	});
+
 	console.log('197');
 	noteStore = client.getNoteStore();
 	console.log('199');
 	
-	note.content = '<?xml version="1.0" encoding="UTF-8"?>';
-	note.content += '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">';
-	note.content += '<en-note>'+ JSON.stringify(pdf) + '</en-note>';
-	
-	console.log('203' + note);
-	
-	console.log('204' + note.content);
-	
-	noteStore.createNote(authToken, note, function(note) {
-		console.log("206, updated note + " + note.title);
+	var md5 = crypto.createHash('md5');
+	hashHex = md5.digest('hex');
+
+	// The content of an Evernote note is represented using Evernote Markup Language
+	// (ENML). The full ENML specification can be found in the Evernote API Overview
+	// at http://dev.evernote.com/documentation/cloud/chapters/ENML.php
+	 note.content = '<?xml version="1.0" encoding="UTF-8"?>';
+	 note.content += '<!DOCTYPE en-note SYSTEM "http://xml.evernote.com/pub/enml2.dtd">';
+	 note.content += '<en-note>'+ JSON.stringify(pdf) +'<br/>';
+	 note.content += '<en-media type="image/png" hash="' + hashHex + '"/>';
+	 note.content += '</en-note>';
+
+	console.log('209' + note.guid);
+	console.log('210' + note.title);
+	console.log('211' + note.content);
+
+	noteStore.updateNote(authToken, note, function(note) {
+		console.log("214 - updated note + " + note.title);
 		if(callback) {
 			callback(note);
 		}
 	});
+
 }
